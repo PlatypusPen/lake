@@ -31,6 +31,8 @@ MemCache 是面向 **LLM / GR 推理** 的**高性能分布式 KVCache 对象存
 
 ## 架构
 
+![MemCache 架构图](source/memcache_architecture.png)
+
 ```
 推理进程 (vLLM-Ascend / …)
   └─ LocalService 客户端 (whl/so) ──RPC──► MetaService
