@@ -47,14 +47,14 @@ Python：`pymmc.cpp` + `doc/memcache_python_api.md`。
 
 **与 lake**：形近「dumb 字节 put/get」；lake 在控制面另建 radix / `RegisterBlocks`，池不解释张量布局。
 
-## 元数据层次：key → ObjMeta → Blob
+## MetaService 元数据层次：
 
-MetaService 内存中的元数据是一条**四层持有链**（`MmcMetaManager` → 容器/分配器 → 对象 → blob），key 本身不进对象元数据，而是容器的索引：
+MetaService 内存中的元数据是一条**四层持有链**（`MmcMetaManager` → 容器/分配器 `MmcMetaContainerLRU` → 对象 → blob），key 本身不进对象元数据，而是容器的索引：
 
 ```mermaid
 classDiagram
     class MmcMetaManager {
-        +MmcMetaContainerPtr metaContainer_
+        +MmcRef&lt;MmcMetaContainer&lt;std::string, MmcMemObjMetaPtr&gt;&gt; metaContainer_
         +MmcGlobalAllocatorPtr globalAllocator_
         +MmcIntervalMap~GvaMapInfo~ gva2updateMap_
         +uint64_t defaultTtlMs_
@@ -73,7 +73,7 @@ classDiagram
         +MultiLevelElimination(high, low)
     }
     class ValueLruItem {
-        +Value value_
+        +Value value_ // MmcMemObjMetaPtr 类型
         +MediaType mediaType_
         +list~Key~ 迭代器 lruIter_
     }
